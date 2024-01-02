@@ -70,4 +70,11 @@ config PHY_MONITOR_PERIOD
 	  periodically executed to detect and report any changes in the
 	  PHY link status to the operating system.
 
+config PHY_TI_DP83825I
+	bool "Texas Insruments DP83825I Phy Driver"
+	default y
+	depends on MDIO
+	help
+	  Enable the TI DP83825I Phy Driver. Used for example on Teensy4.1 board.
+
 endmenu # "Ethernet PHY Drivers"
