@@ -22,10 +22,12 @@ extern "C" {
  * @brief DAC driver APIs
  * @defgroup dac_interface DAC driver APIs
  * @since 2.3
- * @version 0.8.0
+ * @version 0.8.1
  * @ingroup io_interfaces
  * @{
  */
+
+#define DAC_WRITE_ALL_CH	0xA0
 
 /**
  * @brief Structure for specifying the configuration of a DAC channel.
@@ -63,6 +65,14 @@ typedef int (*dac_api_write_value)(const struct device *dev,
 				    uint8_t channel, uint32_t value);
 
 /*
+ * Type definition of DAC API function for updating a DAC register.
+ * See dac_update_value() for argument descriptions.
+ *
+ */
+typedef int (*dac_api_update_value)(const struct device *dev,
+				    uint8_t channel, uint32_t value);
+
+/*
  * DAC driver API
  *
  * This is the mandatory API any DAC driver needs to expose.
@@ -70,6 +80,7 @@ typedef int (*dac_api_write_value)(const struct device *dev,
 __subsystem struct dac_driver_api {
 	dac_api_channel_setup channel_setup;
 	dac_api_write_value   write_value;
+	dac_api_update_value  update_value;
 };
 
 /**
@@ -121,6 +132,28 @@ static inline int z_impl_dac_write_value(const struct device *dev,
 				(const struct dac_driver_api *)dev->api;
 
 	return api->write_value(dev, channel, value);
+}
+
+/**
+ * @brief Update a DAC channel value to be used with optional latch pin.
+ *
+ * @param dev         Pointer to the device structure for the driver instance.
+ * @param channel     Number of the channel to be used.
+ * @param value       Data to be written to the DAC output registers.
+ *
+ * @retval 0          On success.
+ * @retval -EINVAL    If a paramter with an invalid value has been provided.
+ */
+__syscall int dac_update_value(const struct device *dev, uint8_t channel,
+			       uint32_t value);
+
+static inline int z_impl_dac_update_value(const struct device *dev,
+						uint8_t channel, uint32_t value)
+{
+	const struct dac_driver_api *api =
+				(const struct dac_driver_api *)dev->api;
+
+	return api->update_value(dev, channel, value);
 }
 
 /**

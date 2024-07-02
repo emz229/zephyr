@@ -32,3 +32,13 @@ static inline int z_vrfy_dac_write_value(const struct device *dev,
 				      value);
 }
 #include <zephyr/syscalls/dac_write_value_mrsh.c>
+
+static inline int z_vrfy_dac_write_value(const struct device *dev,
+					 uint8_t channel, uint32_t value)
+{
+	K_OOPS(K_SYSCALL_DRIVER_DAC(dev, update_value);
+
+	return z_impl_dac_write_value((const struct device *)dev, channel,
+				      value);
+}
+#include <zephyr/syscalls/dac_update_value_mrsh.c>
