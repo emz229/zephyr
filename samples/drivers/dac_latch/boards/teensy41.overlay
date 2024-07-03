@@ -1,0 +1,30 @@
+/ {
+   aliases {
+            dac = &dac1;
+   };
+
+   chosen {
+            zephyr,console = &lpuart4;
+            zephyr,shell-uart = &lpuart4;
+   };
+};
+
+&lpuart4 {
+          status = "okay";
+          current-speed = < 115200 >;
+};
+
+&lpspi4 {
+         status = "okay";
+
+         dac1: mcp4802@0 {
+               compatible = "microchip,mcp4802";
+               reg = <0>;
+               #io-channel-cells = <1>;
+               powerdown = <1 0>;
+               gain = <1 1>;
+               spi-max-frequency = <1000000>;
+               status = "okay";
+               latch-gpios = <&gpio4 31 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+         };
+};
